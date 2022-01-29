@@ -2,7 +2,7 @@
 This is the self-defied gym env for running stable-baselines3 algorithms. The env is defined in the folder named "envs"
 
 ## Setup
-In this project, you will need to have gym and stable-baselines3 installed. This repo is usable on Linux machine.
+In this project, you will need to have ```gym``` and ```stable-baselines3``` installed. This repo is usable on Linux machine.
 
 ## Register env
 After defining functions needed for a gym class, register using
