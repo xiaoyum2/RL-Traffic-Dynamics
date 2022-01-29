@@ -7,8 +7,8 @@ In this project, you will need to have gym and stable-baselines3 installed. This
 ## Register env
 After defining functions needed for a gym class, register using
 
-'''
+```
 pip install -e gym-basic
-'''
+```
 
 Refer to https://towardsdatascience.com/beginners-guide-to-custom-environments-in-openai-s-gym-989371673952 for details.
