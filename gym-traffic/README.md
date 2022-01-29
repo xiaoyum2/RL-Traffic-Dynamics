@@ -1,22 +1,14 @@
-# ECE598_project
+# gym-traffic
+This is the self-defied gym env for running stable-baselines3 algorithms. The env is defined in the folder named "envs"
 
 ## Setup
-In this project, you are required to set up mujoco-py, a detailed tutorial is in [@openai](https://github.com/openai/mujoco-py#install-mujoco)
+In this project, you will need to have gym and stable-baselines3 installed. This repo is usable on Linux machine.
 
-### Common problem during mujoco-py set up
-If you meet `command 'gcc' failed with exit status 1`. 
-You need to install libosmesa6-dev.
+## Register env
+After defining functions needed for a gym class, register using
 
-```
-sudo apt-get install libosmesa6-dev
-```
+'''
+pip install -e gym-basic
+'''
 
-If you meet the error about missing patchelf module, try to install patchelf.
-
-```
-conda install -c anaconda patchelf
-```
-
-## Approaches
-
-In this project, the main method is Hindsight-experience-replay ([@HER](https://github.com/TianhongDai/hindsight-experience-replay)), a reinforcement learning algorithm that can learn from failure. 
+Refer to https://towardsdatascience.com/beginners-guide-to-custom-environments-in-openai-s-gym-989371673952 for details.
