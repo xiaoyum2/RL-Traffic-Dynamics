@@ -2,7 +2,7 @@
 This is the self-defied gym env for running stable-baselines3 algorithms. The env is defined in the folder named "envs". Model including traffic dynamics is included in the directery of ```gym-traffic/gym_traffic/envs```
 
 ## Case now considering
-![This is an image](/simple_case.png)
+![This is an image](https://github.com/xiaoyum2/RL-Traffic-Dynamics/tree/main/gym-traffic/simple_case.PNG)
 
 ## Setup
 In this project, you will need to have ```gym``` and ```stable-baselines3``` installed. This repo is usable on Linux machine.
