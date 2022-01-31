@@ -12,3 +12,7 @@ pip install -e gym-basic
 ```
 
 Refer to https://towardsdatascience.com/beginners-guide-to-custom-environments-in-openai-s-gym-989371673952 for details.
+
+
+## Run the RL with custom env
+run ```python3 main.py``` in this folder for trainging and validating
