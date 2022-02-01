@@ -5,7 +5,7 @@ from models.policy import random_policy
 from options import parse_options
 import logging as log
 
-from stable_baselines3 import PPO, A2C
+from stable_baselines3 import PPO, A2C, DDPG
 from stable_baselines3.common.env_checker import check_env
 
 
@@ -28,7 +28,7 @@ if __name__ == "__main__":
     # action = random_policy(obs['observation'], obs['desired_goal'],env)
     # obs, reward, done, info = env.step(action)
     # model = PPO("MultiInputPolicy", env, verbose=1)
-    model = PPO("MlpPolicy", env, verbose=1, learning_rate=1)
+    model = DDPG("MlpPolicy", env, verbose=1, learning_rate=0.1)
 
     action, _states = model.predict(obs, deterministic=True)
 
@@ -41,11 +41,17 @@ if __name__ == "__main__":
     model.learn(total_timesteps=10000)
     print("Trained!")
     
-    for i in range(10):
+    obs = env.reset()
+    for i in range(1000):
+        if i%10==0:
+            print("Road status before:", obs)
+            print("Action:", action)
         action, _states = model.predict(obs, deterministic=True)
         obs, reward, done, info = env.step(action)
         # env.render()
-        print(env.state)
+        if i%10==0:
+            print("Road status new:", obs)
+            print("Reward:", reward)
         if done:
             obs = env.reset()
     env.close()
