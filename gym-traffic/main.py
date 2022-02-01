@@ -29,10 +29,19 @@ if __name__ == "__main__":
     # obs, reward, done, info = env.step(action)
     # model = PPO("MultiInputPolicy", env, verbose=1)
     model = PPO("MlpPolicy", env, verbose=1, learning_rate=1)
-    model.learn(total_timesteps=1)
+
+    action, _states = model.predict(obs, deterministic=True)
+
+    # obs, reward, done, info = env.step(action)
+    # # env.render()
+    # print(env.state)
+    # if done:
+    #     obs = env.reset()
+
+    model.learn(total_timesteps=10000)
     print("Trained!")
     
-    for i in range(1000):
+    for i in range(10):
         action, _states = model.predict(obs, deterministic=True)
         obs, reward, done, info = env.step(action)
         # env.render()
