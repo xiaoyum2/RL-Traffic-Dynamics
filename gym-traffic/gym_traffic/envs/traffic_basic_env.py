@@ -24,17 +24,15 @@ class TrafficEnv(gym.Env):
         self.jam_density_link = np.array([2.0, 2.0, 1.2, 1.2, 1.2, 2.0])
         self.human_headway_link = np.array([5.0, 5.0, 5.0, 5.0, 5.0, 5.0])
 
-        self.total_veh_num = 800
+        self.total_veh_num = 1100
         #dynamic coef.
         self.miu = 0.001
 
     def step(self, action):
-        print("Action:", action)
-        print("State:",self.state)
-        if (np.sum(np.abs(action))<0.1):
-            done = True
-        else:
-            done = False
+        flag_done = False
+        # print("Action:", action)
+        # print("State:",self.state)
+
 
         veh_num = self.state.copy()
         density_link = veh_num/self.length_link
@@ -51,7 +49,7 @@ class TrafficEnv(gym.Env):
             elif(density_link[i]>self.jam_density_link[i]):
                 flow_link[i] = 0
                 latency_link[i] = np.infty
-                done = True # failed
+                flag_done = True # failed
                 print("Link ",str(i), "is totally jammed!")
 
             else:
@@ -62,7 +60,7 @@ class TrafficEnv(gym.Env):
         reward = 0
         for i in range(self.num_link):
             reward -= self.state[i]*latency_link[i]
-        # print("reward:", reward)
+        print("reward:", reward)
 
         # calculate vehcle number on each link for next time step
         # need future modification for generalizing with dif  ferent path number!
@@ -81,8 +79,8 @@ class TrafficEnv(gym.Env):
         total_val = path_1_val+path_2_val+path_3_val+path_4_val
         # print(self.state)
         # print("total divide:", total_val)
-        print("Latencies:", latency_link)
-        print("Path_Val:", np.array([path_1_val, path_2_val, path_3_val, path_4_val]))
+        # print("Latencies:", latency_link)
+        # print("Path_Val:", np.array([path_1_val, path_2_val, path_3_val, path_4_val]))
 
         _path_1 =  self.total_veh_num*path_1_val/(total_val)
         _path_2 =  self.total_veh_num*path_2_val/(total_val)
@@ -95,9 +93,15 @@ class TrafficEnv(gym.Env):
         state_new[4] = _path_1+_path_4
         state_new[5] = _path_2+_path_3
 
+        if(np.sum(np.abs(self.state-state_new))<0.1):
+            flag_done = True
+        
         self.state = state_new
             
-        # regardless of the action, game is done after a single step
+        if (flag_done):
+            done = True
+        else:
+            done = False
 
         info = {}
 
