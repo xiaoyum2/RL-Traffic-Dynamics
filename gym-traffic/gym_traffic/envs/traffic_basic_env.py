@@ -27,13 +27,13 @@ class TrafficEnv(gym.Env):
         # self.human_headway_link = np.array([3.0, 3.0, 3.0, 3.0, 3.0, 3.0])
 
         #simplest network with 4 links and 2 nodes (1 OD pair)
-        self.action_space = spaces.Box(low=np.array([2.5, 1.0, 1.0, 1.0, 2.5, 1.0, 1.0, 1.0]), high=np.array([+10.0, +10.0, +10.0, +10.0, +10.0, +10.0, +10.0, +10.0]), dtype=np.float32)
+        self.action_space = spaces.Box(low=np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), high=np.array([+10.0, +10.0, +10.0, +10.0, +10.0, +10.0, +10.0, +10.0]), dtype=np.float32)
         self.observation_space = spaces.Box(low=np.array([0, 0, 0, 0, 0, 0, 0, 0]), high=np.array([2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000]), dtype=np.float32)
 
         self.num_link = 8
         
-        self.total_veh_num = 630
-        self.state = np.array([600,10,10,10,600,10,10,10])
+        self.total_veh_num = 1020
+        self.state = np.array([800,200,10,10,800,200,10,10])
         self.lanes_link = np.array([2, 2, 2, 2, 2, 2, 2, 2])
         self.length_link = np.array([500, 600, 500, 500, 500, 600, 500, 500])
         self.free_v_link = np.array([50, 50, 50, 50, 50, 50, 50, 50])
@@ -44,7 +44,8 @@ class TrafficEnv(gym.Env):
 
 
         #dynamic coef, which needed to be twitched from 1
-        self.miu = 0.1
+        self.miu = 0.05
+        self.nu = 1000  #new coefficient for hybrid reward function
 
     def step(self, action):
         flag_done = False
@@ -60,6 +61,45 @@ class TrafficEnv(gym.Env):
         latency_link = np.zeros(self.num_link)
 
         # old definition of flow and latency
+        # for i in range(self.num_link):
+        #     if(density_link[i]<cri_density_link[i]):
+        #         flow_link[i] = self.free_v_link[i]*density_link[i]
+        #         latency_link[i] = self.length_link[i]/self.free_v_link[i]
+
+        #     elif(density_link[i]>self.jam_density_link[i]):
+        #         flow_link[i] = 0
+        #         # latency_link[i] = np.infty
+        #         latency_link[i] = 1000000
+        #         flag_done = True # failed
+        #         # print("Link ",str(i), "is totally jammed!")
+
+        #     else:
+        #         flow_link[i] = self.free_v_link[i]*cri_density_link[i]*(self.jam_density_link[i]-density_link[i])/(self.jam_density_link[i]-cri_density_link[i])
+        #         latency_link[i] = self.length_link[i]*(self.jam_density_link[i]/flow_link[i]+(cri_density_link[i]-self.jam_density_link[i])/(self.free_v_link[i]*cri_density_link[i]))
+        # reward = 0
+        # for i in range(self.num_link):
+        #     reward -= self.state[i]*latency_link[i]
+        # print("reward:", reward)
+
+        # new definition of flow and latency
+        # for i in range(self.num_link):
+        #     if(density_link[i]<cri_density_link[i]):
+        #         flow_link[i] = self.free_v_link[i]*density_link[i]
+
+        #     elif(density_link[i]>self.jam_density_link[i]):
+        #         flow_link[i] = 0
+
+        #     else:
+        #         flow_link[i] = self.free_v_link[i]*cri_density_link[i]*(self.jam_density_link[i]-density_link[i])/(self.jam_density_link[i]-cri_density_link[i])
+            
+        #     latency_link[i] = density_link[i]
+        # reward = 0
+        # for i in range(self.num_link):
+        #     reward -= density_link[i]
+        # reward = reward*100
+        # print("reward:", reward)
+
+        # hybrid definition, updated Feb. 12th
         for i in range(self.num_link):
             if(density_link[i]<cri_density_link[i]):
                 flow_link[i] = self.free_v_link[i]*density_link[i]
@@ -74,26 +114,12 @@ class TrafficEnv(gym.Env):
 
             else:
                 flow_link[i] = self.free_v_link[i]*cri_density_link[i]*(self.jam_density_link[i]-density_link[i])/(self.jam_density_link[i]-cri_density_link[i])
-                latency_link[i] = self.length_link[i]*(self.jam_density_link[i]/flow_link[i]+(cri_density_link[i]-self.jam_density_link[i])/(self.free_v_link[i]*cri_density_link[i]))
-
-        # new definition of flow and latency
+                latency_link[i] = self.length_link[i]*(self.jam_density_link[i]/flow_link[i]+(cri_density_link[i]-self.jam_density_link[i])/(self.free_v_link[i]*cri_density_link[i]))               
+        # reward = 0
         # for i in range(self.num_link):
-        #     if(density_link[i]<cri_density_link[i]):
-        #         flow_link[i] = self.free_v_link[i]*density_link[i]
+        #     reward -= self.state[i]*latency_link[i] + density_link[i]*self.nu         
 
-        #     elif(density_link[i]>self.jam_density_link[i]):
-        #         flow_link[i] = 0
 
-        #     else:
-        #         flow_link[i] = self.free_v_link[i]*cri_density_link[i]*(self.jam_density_link[i]-density_link[i])/(self.jam_density_link[i]-cri_density_link[i])
-            
-        #     latency_link[i] = flow_link[i]*density_link[i]
-    
-
-        reward = 0
-        for i in range(self.num_link):
-            reward -= self.state[i]*latency_link[i]
-        # print("reward:", reward)
 
 
         # calculate vehcle number on each link for next time step
@@ -174,7 +200,41 @@ class TrafficEnv(gym.Env):
             
             self.state = state_new
 
+        #calculate the reward after one step of natural evolve
+        veh_num = state_new
+        density_link = veh_num/self.length_link
+        cri_density_link = self.lanes_link/(action*self.alpha_link + self.human_headway_link*(1-self.alpha_link))
+        flow_link = np.zeros(self.num_link)
+        latency_link = np.zeros(self.num_link)
+        for i in range(self.num_link):
+            if(density_link[i]<cri_density_link[i]):
+                flow_link[i] = self.free_v_link[i]*density_link[i]
+                latency_link[i] = self.length_link[i]/self.free_v_link[i]
 
+            elif(density_link[i]>self.jam_density_link[i]):
+                flow_link[i] = 0
+                # latency_link[i] = np.infty
+                latency_link[i] = 1000000
+                flag_done = True # failed
+                # print("Link ",str(i), "is totally jammed!")
+
+            else:
+                flow_link[i] = self.free_v_link[i]*cri_density_link[i]*(self.jam_density_link[i]-density_link[i])/(self.jam_density_link[i]-cri_density_link[i])
+                latency_link[i] = self.length_link[i]*(self.jam_density_link[i]/flow_link[i]+(cri_density_link[i]-self.jam_density_link[i])/(self.free_v_link[i]*cri_density_link[i]))               
+        reward = 0
+        for i in range(self.num_link):
+            reward -= self.state[i]*latency_link[i] + np.var(density_link)*self.nu
+
+        # new reward function with density as latency
+        # reward = 0
+        # for i in range(self.num_link):
+        #     reward -= density_link[i]
+        # reward = reward
+
+        # hybrid reward function, updated Feb.12th
+        # reward = 0
+        # for i in range(self.num_link):
+        #     reward -= self.state[i]*latency_link[i] + density_link[i]*self.nu
         
         # print("State:",self.state) 
         if (flag_done):
@@ -193,7 +253,7 @@ class TrafficEnv(gym.Env):
         # self.state = np.array([900,200,100,100,900,200])
 
         # for 4 paths with same OD pair
-        self.state = np.array([600,10,10,10,600,10,10,10])
+        self.state = np.array([800,200,10,10,800,200,10,10])
         return self.state
   
     def render(self, mode='human'):
