@@ -17,7 +17,7 @@ class TrafficMidEnv(gym.Env):
         # O---<=>---A---<=>---D
         #  (link 1)   (link 3)
 
-        self.action_space = spaces.Box(low=np.array([10.0, 1.0, 1.0, 1.0]), high=np.array([+10.0, +1.0, +1.0, +1.0]), dtype=np.float32)
+        self.action_space = spaces.Box(low=np.array([1.0, 1.0, 1.0, 1.0]), high=np.array([+10.0, +10.0, +10.0, +10.0]), dtype=np.float32)
         self.observation_space = spaces.Box(low=np.array([0, 0, 0, 0]), high=np.array([2000, 2000, 2000, 2000]), dtype=np.float32)
 
         self.num_link = 4
