@@ -1,4 +1,5 @@
 from gym_traffic.envs.traffic_basic_env import TrafficEnv
+from gym_traffic.envs.traffic_middle_env import TrafficMidEnv
 import numpy as np
 import gym
 from models.policy import random_policy
@@ -19,7 +20,8 @@ if __name__ == "__main__":
 
     # args, args_str = parse_options()
     # env = gym.make(args.environment_name)
-    env = TrafficEnv()
+    # env = TrafficEnv()
+    env = TrafficMidEnv()
     obs = env.reset()
 
     # check_env(env)
@@ -38,12 +40,12 @@ if __name__ == "__main__":
     # if done:
     #     obs = env.reset()
 
-    model.learn(total_timesteps=100000)
+    model.learn(total_timesteps=1000)
     print("Trained!")
     
     obs = env.reset()
-    for i in range(20):
-        print("Road status before:", obs)
+    for i in range(2):
+        # print("Road status before:", obs)
 
         # if i%10==0:
         #     print("Road status before:", obs)
@@ -52,7 +54,7 @@ if __name__ == "__main__":
         obs, reward, done, info = env.step(action)
         # env.render()
         print("Action:", action)
-        print("Road status new:", obs)
+        # print("Road status new:", obs)
         print("Reward:", reward)
         print("\n")
         # if i%10==0:
