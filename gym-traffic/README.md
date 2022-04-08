@@ -12,3 +12,7 @@ pip install -e gym-basic
 '''
 
 Refer to https://towardsdatascience.com/beginners-guide-to-custom-environments-in-openai-s-gym-989371673952 for details.
+
+
+## Colab Environment
+A simple colab configuration is available at https://colab.research.google.com/drive/1M0dQlRzPkNVWox-h17OrJO9z0i62yZHz?usp=sharing
